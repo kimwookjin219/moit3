@@ -57,18 +57,49 @@ jobs:       # 실행할 job 정의
           echo "✅ JAR file found: ${{ env.JAR_FILE }}"
 
       - name: Create Backend .env from Secrets
-        run: |                     # secrets 기반으로 .env 파일 생성    
+        run: |
+          rm -f back/.env
+
+          # DB
           echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> back/.env
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> back/.env
+
+          # JWT
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> back/.env
+
+          # OAuth
           echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> back/.env
           echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> back/.env
           echo "KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}" >> back/.env
           echo "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" >> back/.env
           echo "NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}" >> back/.env
+
+          # Solapi SMS
           echo "SOLAPI_API_KEY=${{ secrets.SOLAPI_API_KEY }}" >> back/.env
           echo "SOLAPI_API_SECRET=${{ secrets.SOLAPI_API_SECRET }}" >> back/.env
           echo "SOLAPI_SENDER=${{ secrets.SOLAPI_SENDER }}" >> back/.env
+
+          # Admin
+          echo "ADMIN_ID=${{ secrets.ADMIN_ID }}" >> back/.env
+          echo "ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}" >> back/.env
+          echo "ADMIN_MOBILE=${{ secrets.ADMIN_MOBILE }}" >> back/.env
+          echo "ADMIN_NICKNAME=${{ secrets.ADMIN_NICKNAME }}" >> back/.env
+          echo "ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}" >> back/.env
+
+          # API
+          echo "KMA_API_KEY=${{ secrets.KMA_API_KEY }}" >> back/.env
+          echo "VWORLD_API_KEY=${{ secrets.VWORLD_API_KEY }}" >> back/.env
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> back/.env
+          echo "TOSS_SECRET_KEY=${{ secrets.TOSS_SECRET_KEY }}" >> back/.env
+
+          # Mail
+          echo "MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}" >> back/.env
+          echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}" >> back/.env
+
+          # Naver Mail
+          echo "NAVER_HOST=${{ secrets.NAVER_HOST }}" >> back/.env
+          echo "NAVER_USER=${{ secrets.NAVER_USER }}" >> back/.env
+          echo "NAVER_PASSWORD=${{ secrets.NAVER_PASSWORD }}" >> back/.env
 
       - name: Ensure app directory exists on EC2
         uses: appleboy/ssh-action@v0.1.7                 #   EC2 접속후 디렉토리 생성
