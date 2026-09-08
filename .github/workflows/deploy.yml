@@ -68,6 +68,7 @@ jobs:       # 실행할 job 정의
           echo "NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}" >> back/.env
           echo "SOLAPI_API_KEY=${{ secrets.SOLAPI_API_KEY }}" >> back/.env
           echo "SOLAPI_API_SECRET=${{ secrets.SOLAPI_API_SECRET }}" >> back/.env
+          echo "SOLAPI_SENDER=${{ secrets.SOLAPI_SENDER }}" >> back/.env
 
       - name: Ensure app directory exists on EC2
         uses: appleboy/ssh-action@v0.1.7                 #   EC2 접속후 디렉토리 생성
