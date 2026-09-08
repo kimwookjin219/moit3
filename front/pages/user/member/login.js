@@ -196,7 +196,7 @@ function Login(){
         localStorage.setItem("socialProvider", "KAKAO");
 
         window.location.href =
-            `http://localhost:8080/oauth2/authorization/kakao?deviceId=${encodeURIComponent(deviceId)}`;
+            `/oauth2/authorization/kakao?deviceId=${encodeURIComponent(deviceId)}`;
     };
 
 
@@ -209,7 +209,7 @@ function Login(){
         localStorage.setItem("socialProvider", "NAVER");
 
         window.location.href =
-            `http://localhost:8080/oauth2/authorization/naver?deviceId=${encodeURIComponent(deviceId)}`;
+            `/oauth2/authorization/naver?deviceId=${encodeURIComponent(deviceId)}`;
     };
 
 
@@ -222,7 +222,7 @@ function Login(){
         localStorage.setItem("socialProvider", "GOOGLE");
 
         window.location.href =
-            `http://localhost:8080/oauth2/authorization/google?deviceId=${encodeURIComponent(deviceId)}`;
+            `/oauth2/authorization/google?deviceId=${encodeURIComponent(deviceId)}`;
     }; 
 
     ///////////////////////////////
