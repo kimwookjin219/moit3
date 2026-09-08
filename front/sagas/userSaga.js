@@ -50,14 +50,20 @@ function getDeviceId() {
     let deviceId = localStorage.getItem("deviceId");
 
     if (!deviceId) {
-        deviceId = crypto.randomUUID();
-        localStorage.setItem("deviceId", deviceId);
+        if (
+            window.crypto &&
+            typeof window.crypto.randomUUID === "function"
+        ) {
+            deviceId = window.crypto.randomUUID();
+        } else {
+            deviceId =
+            "device-" +
+            Date.now() +
+            "-" +
+            Math.random().toString(36).substring(2, 11);
+        }
 
-        // console.log("===== DEVICE ID 생성 =====");
-        // console.log("deviceId:", deviceId);
-    } else {
-        // console.log("===== DEVICE ID 기존값 사용 =====");
-        // console.log("deviceId:", deviceId);
+        localStorage.setItem("deviceId", deviceId);
     }
 
     return deviceId;

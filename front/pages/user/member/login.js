@@ -27,7 +27,19 @@ function Login(){
         let deviceId = localStorage.getItem("deviceId");
 
         if (!deviceId) {
-            deviceId = crypto.randomUUID();
+            if (
+                window.crypto &&
+                typeof window.crypto.randomUUID === "function"
+            ) {
+                deviceId = window.crypto.randomUUID();
+            } else {
+                deviceId =
+                "device-" +
+                Date.now() +
+                "-" +
+                Math.random().toString(36).substring(2, 11);
+            }
+
             localStorage.setItem("deviceId", deviceId);
         }
 

@@ -22,13 +22,20 @@ function getDeviceId() {
 
   // 최초 접속이면 Device ID 생성
   if (!deviceId) {
+      if (
+        window.crypto &&
+        typeof window.crypto.randomUUID === "function"
+      ) {
+        deviceId = window.crypto.randomUUID();
+      } else {
+        deviceId =
+          "device-" +
+          Date.now() +
+          "-" +
+          Math.random().toString(36).substring(2, 11);
+      }
 
-    deviceId = crypto.randomUUID();
-
-    localStorage.setItem(
-      "deviceId",
-      deviceId
-    );
+      localStorage.setItem("deviceId", deviceId);
   }
 
   return deviceId;
