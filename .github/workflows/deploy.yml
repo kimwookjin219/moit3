@@ -163,7 +163,7 @@ jobs:       # 실행할 job 정의
       # 빌드 전에 .env.production이 반영되도록 순서 조정   
       - name: Build Frontend
         run: |
-          npm install
+          npm install --legacy-peer-deps
           npm run build -- --no-lint
         working-directory: front
 
