@@ -134,7 +134,7 @@ jobs:       # 실행할 job 정의
               sleep 10
             done
 
-            - name: Run Backend on EC2 with pm2
+      - name: Run Backend on EC2 with pm2
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
