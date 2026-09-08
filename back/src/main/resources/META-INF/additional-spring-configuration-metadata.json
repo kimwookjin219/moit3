@@ -1,0 +1,22 @@
+{"properties": [
+  {
+    "name": "toss.secret-key",
+    "type": "java.lang.String",
+    "description": "A description for 'toss.secret-key'"
+  },
+  {
+    "name": "naver.host",
+    "type": "java.lang.String",
+    "description": "A description for 'naver.host'"
+  },
+  {
+    "name": "naver.user",
+    "type": "java.lang.String",
+    "description": "A description for 'naver.user'"
+  },
+  {
+    "name": "naver.password",
+    "type": "java.lang.String",
+    "description": "A description for 'naver.password'"
+  }
+]}

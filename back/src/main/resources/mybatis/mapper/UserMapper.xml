@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.moit.member.dao.UserMapper">
+  
+  <!-- 로그인 -->	
+  <select id="readByLoginId" parameterType="string" resultType="AuthUserDto">
+     SELECT m.login_id, m.password, mt.type_name, m.nickname,m.profile_url,m.status_id,m.member_type_id
+        FROM members m
+        JOIN member_type mt ON m.member_type_id = mt.member_type_id
+        WHERE m.login_id = #{loginId} AND m.delete_yn = 'N'
+  </select>
+  
+  <!-- 소셜로그인 -->
+  <select id="findByProvider"
+        parameterType="UserDto"
+        resultType="UserDto">
+		SELECT *
+		FROM members
+		WHERE provider = #{provider}
+		  AND provider_id = #{providerId}	
+  </select>
+  
+  <update id="connectProvider" parameterType="UserDto">
+	UPDATE members
+	SET provider = #{provider}, provider_id = #{providerId}
+	WHERE member_id = #{memberId}
+  </update>
+  
+  <update id="updateSocialInfo" parameterType="UserDto">
+	    UPDATE members
+	       SET mobile = #{mobile}, status_id = 1
+	     WHERE member_id = #{memberId}	
+  </update>
+	
+  
+  <select id="findByEmail" parameterType="String" resultType="UserDto">
+		SELECT
+		    *
+		FROM members
+		WHERE email = #{email}
+		AND delete_yn='N'	
+  </select>
+  
+  <!-- 마이페이지 -->
+  <select id="findByLoginId" resultType="UserDto" parameterType="UserDto">
+		SELECT
+	    m.member_id, m.login_id, m.mobile, m.nickname, m.email, m.password, m.profile_url, m.member_type_id, m.status_id,	
+	    TO_CHAR(m.created_at,'YYYY-MM-DD') AS created_at, mi.gender,  TO_CHAR(mi.birth,'YYYY-MM-DD') AS birth, mi.point, mi.trust_score, mi.login_ip, mi.join_ip, mi.ai_summary
+	
+		FROM members m
+		LEFT JOIN member_info mi
+		ON m.member_id = mi.member_id
+		
+		WHERE m.login_id = #{loginId}
+		AND m.delete_yn='N'
+  </select>
+  
+  <!-- 관심사 조회(마이페이지) -->
+  <select id="selectInterestList" parameterType="int" resultType="String">
+	    SELECT i.interest_name
+	    FROM member_interest mi
+	    JOIN interest i
+	      ON mi.interest_id = i.interest_id
+	    WHERE mi.member_id = #{memberId}
+	    ORDER BY i.interest_id
+	</select>
+	
+	<!-- 회원 관심사 ID 조회 -->
+	<select id="selectInterestIds" parameterType="int" resultType="int">
+	    SELECT interest_id
+	    FROM member_interest
+	    WHERE member_id = #{memberId}
+	</select>
+	
+	<select id="selectAllInterest" resultType="InterestDto">
+	    SELECT interest_id, interest_name
+	    FROM interest
+	    ORDER BY interest_id
+	</select>
+	
+	<delete id="deleteMemberInterest">
+	    DELETE FROM member_interest
+	    WHERE member_id = #{memberId}
+	</delete>
+  
+  <!-- 회원가입 -->
+  <insert id="insert" parameterType="UserDto" keyProperty="memberId" >
+        
+        <selectKey keyProperty="memberId"
+               resultType="integer"
+               order="BEFORE">
+        SELECT members_seq.nextval FROM dual
+    	</selectKey>
+        INSERT INTO members (
+            member_id,login_id, mobile, nickname, email, password, member_type_id, status_id, profile_url
+        ) VALUES (
+            #{memberId},#{loginId}, #{mobile}, #{nickname}, #{email}, #{password}, #{memberTypeId}, #{statusId}, #{profileUrl}
+        )
+  </insert>
+  
+  <!-- 소셜 회원 -->
+  <insert id="insertSocial" parameterType="UserDto" keyProperty="memberId">
+		INSERT INTO members
+		( member_id, login_id, email, nickname, password, profile_url, member_type_id, status_id, provider, provider_id )
+		VALUES 
+		( members_seq.nextval,  #{loginId}, #{email},  #{nickname},  #{password},  #{profileUrl,jdbcType=VARCHAR},  #{memberTypeId},  #{statusId},  #{provider},  #{providerId} )
+
+  </insert>
+  
+  <!-- 방금 insert된 회원 번호에 info 추가 -->
+  <insert id="insertInfo" parameterType="UserDto">
+  	insert into member_info(
+		member_id,
+		gender,
+		birth,
+		join_ip,
+		report_status_id
+	) 
+  	values(
+		members_seq.currval,
+		NVL(#{gender, jdbcType=VARCHAR}, 'N'),
+		#{birth, jdbcType=DATE},
+		NVL(#{joinIp, jdbcType=VARCHAR}, '0.0.0.0'),
+		1
+	)
+  </insert>
+  
+  <insert id="insertSocialInfo">
+		INSERT INTO member_info
+		( member_id, report_status_id )
+		VALUES
+		( members_seq.currval, 1 )
+  </insert>
+  
+  <!-- 회원 관심사 저장 -->
+	<insert id="insertMemberInterest">	
+	    INSERT INTO member_interest
+	    ( member_id, interest_id )
+	    VALUES ( #{memberId}, #{interestId} )
+	</insert>
+  
+  <!-- 중복검사 -->
+  <!--  <select id="findUser" parameterType="map" resultType="UserDto">
+        SELECT * FROM members
+        <where>
+            <choose>
+                <when test="loginId != null and loginId != ''">
+                    AND login_id = #{loginId}
+                </when>
+                <when test="nickname != null and nickname != ''">
+                    AND nickname = #{nickname}
+                </when>
+                <otherwise>
+                    AND 1 = 0
+                </otherwise>
+            </choose>
+        </where>
+    </select> -->
+    
+    <!-- 중복검사 -->
+	<select id="findUser" parameterType="map" resultType="UserDto">
+	
+	    SELECT *
+	    FROM members
+	
+	    <where>
+	
+	        <if test="loginId != null and loginId != ''">
+	            AND login_id = #{loginId}
+	        </if>
+	
+	        <if test="nickname != null and nickname != ''">
+	            AND nickname = #{nickname}
+	        </if>
+	
+	        <if test="mobile != null and mobile != ''">
+	            AND mobile = #{mobile}
+	        </if>
+	
+	        <if test="email != null and email != ''">
+	            AND email = #{email}
+	        </if>
+	
+	    </where>
+	
+	</select>
+    
+    <!-- 회원정보 수정 -->
+    <update id="updateUser" parameterType="UserDto">
+        UPDATE members
+        <set>
+            <if test="nickname != null and nickname != ''">nickname = #{nickname},</if>
+            <if test="password != null and password != ''">password = #{password},</if>
+            <if test="mobile != null and mobile != ''">mobile = #{mobile},</if>
+            <if test="email != null and email != ''">email = #{email},</if>
+            <!-- <if test="memberTypeId > 0">member_type_id = #{memberTypeId},</if> -->
+            <!-- <if test="statusId > 0">status_id = #{statusId},</if> -->
+            <!-- <if test="deleteYn != null and deleteYn != ''">delete_yn = #{deleteYn},</if> -->
+            <if test="profileUrl != null and profileUrl != ''">profile_url = #{profileUrl},</if>
+        </set>
+        WHERE member_id=#{memberId}
+    </update>
+    
+    <!-- 회원정보(info) 수정 -->
+    <update id="updateMemberInfo">
+		UPDATE member_info		
+			<set>		
+				<if test="gender != null">
+				gender=#{gender},
+				</if>	
+					
+				<if test="birth != null and birth != ''">
+				birth=#{birth},
+				</if>	
+			</set>		
+		WHERE member_id=#{memberId}	
+	</update>
+	
+	<select id="findByMemberId" parameterType="int" resultType="UserDto">
+	    SELECT
+	        member_id,
+	        login_id,
+	        password,
+	        profile_url
+	    FROM members
+	    WHERE member_id = #{memberId}
+	      AND delete_yn = 'N'	
+	</select>	
+    
+    <!-- 회원 목록 -->
+    <select id="select10" parameterType="java.util.HashMap" resultType="UserDto">
+        SELECT * FROM members
+        <where>
+            AND delete_yn = 'N'
+            
+            <if test="memberTypeId > 0">
+                AND member_type_id = #{memberTypeId}
+            </if>
+            <if test="statusId > 0">
+                AND status_id = #{statusId}
+            </if>
+            
+            <if test="searchKeyword != null and searchKeyword != ''">
+                AND (
+                    login_id LIKE '%' || #{searchKeyword} || '%' OR 
+                    nickname LIKE '%' || #{searchKeyword} || '%' OR
+                    email LIKE '%' || #{searchKeyword} || '%'
+                )
+            </if>
+        </where>
+        ORDER BY member_id DESC
+        OFFSET #{start} ROWS
+		FETCH NEXT #{end} ROWS ONLY
+    </select>
+    
+    <!-- 페이징 -->
+    <select id="selectCnt" parameterType="java.util.HashMap" resultType="int">
+        SELECT COUNT(*) FROM members
+        <where>
+            AND delete_yn = 'N'
+            <if test="memberTypeId > 0">
+                AND member_type_id = #{memberTypeId}
+            </if>
+            <if test="statusId > 0">
+                AND status_id = #{statusId}
+            </if>
+            <if test="searchKeyword != null and searchKeyword != ''">
+                AND (
+                    login_id LIKE '%' || #{searchKeyword} || '%' OR 
+                    nickname LIKE '%' || #{searchKeyword} || '%' OR
+                    email LIKE '%' || #{searchKeyword} || '%'
+                )
+            </if>
+        </where>
+    </select>
+    
+    <!-- 회원 논리삭제 -->
+    <update id="deleteYn" parameterType="String">
+    	UPDATE members SET delete_yn='Y' WHERE login_id=#{loginId}
+    </update>
+    
+    <!-- 회원 물리삭제 -->
+    <delete id="deleteUser" parameterType="string">
+        DELETE FROM members WHERE login_id = #{loginId}
+    </delete>
+    
+    <!-- 회원 소프트딜리트 -->
+    <update id="deleteMember">
+	    UPDATE members
+	    SET delete_yn='Y',
+	        status_id=4
+	    WHERE member_id=#{memberId}
+	</update>
+    
+    <!-- 아이디 찾기 -->
+    <select id="findId" parameterType="UserDto" resultType="UserDto">
+	    SELECT login_id
+	    FROM members
+	    WHERE email = #{email}
+	      AND mobile = #{mobile}
+	      AND delete_yn = 'N'
+	</select>
+	
+	<!-- 비밀번호 찾기(회원조회) -->
+	<select id="findPasswordUser" parameterType="UserDto" resultType="UserDto">
+	    SELECT member_id
+	    FROM members
+	    WHERE login_id = #{loginId}
+	      AND email = #{email}
+	      AND mobile = #{mobile}
+	      AND delete_yn='N'
+	</select>
+	
+	<!-- 비밀번호 변경 -->
+	<update id="changePassword" parameterType="UserDto">
+	    UPDATE members
+	       SET password = #{password}
+	     WHERE member_id = #{memberId}
+	</update>
+    
+</mapper>

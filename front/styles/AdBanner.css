@@ -1,0 +1,127 @@
+.main-ad-card {
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+}
+
+.main-ad-card .ant-card-body {
+    padding: 0;
+}
+
+.ad-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 300px;
+}
+
+.ad-image {
+    display: block;
+    width: 100%;
+    object-fit: cover;
+}
+
+
+/* MAIN */
+.ad-image.ad-MAIN {
+    width: 100%;
+    height: 400px;
+}
+
+
+/* 모집 목록 배너 */
+.ad-image.ad-MEETUP_LIST_BANNER {
+    width: 100%;
+    height: 300px;
+}
+
+
+/* 모집 목록 사이드 */
+.ad-image.ad-MEETUP_LIST_SIDEBAR {
+    width: 300px;
+    height: 500px;
+}
+
+
+/* 모집 상세 사이드 */
+.ad-image.ad-MEETUP_DETAIL_SIDEBAR {
+    width: 300px;
+    height: 500px;
+}
+
+
+/* =========================================================
+   PREMIUM 광고
+   ========================================================= */
+
+.premium-ad-overlay {
+    position: absolute;
+
+    top: 16px;
+    left: 16px;
+
+    z-index: 10;
+
+    max-width: 80%;
+
+    cursor: pointer;
+}
+
+
+/* 제목 */
+
+.premium-ad-title {
+    display: inline-block;
+
+    padding: 8px 14px;
+
+    background: rgba(0, 0, 0, 0.55);
+
+    color: white;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    border-radius: 6px;
+}
+
+
+/* 내용 */
+.premium-ad-content {
+    max-height: 0;
+    overflow: hidden;
+
+    margin-top: 4px;
+    padding: 0 14px;
+
+    background: rgba(0, 0, 0, 0.65);
+    color: white;
+
+    border-radius: 0 0 6px 6px;
+
+    line-height: 1.6;
+
+    opacity: 0;
+
+    transition:
+        max-height 0.3s ease,
+        padding 0.3s ease,
+        opacity 0.3s ease;
+
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+
+/* 마우스 올리면 내용 내려옴 */
+.premium-ad-overlay:hover .premium-ad-content {
+    max-height: 250px;
+
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    opacity: 1;
+
+    overflow-y: auto;
+}

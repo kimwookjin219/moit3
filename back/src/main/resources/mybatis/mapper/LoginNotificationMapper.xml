@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.moit.member.dao.LoginNotificationMapper">
+
+    <insert id="insertNewDeviceNotification"
+            parameterType="com.moit.member.dto.NewDeviceNotificationDto">
+
+        <selectKey
+                keyProperty="notificationId"
+                resultType="long"
+                order="BEFORE">
+
+            SELECT notification_seq.NEXTVAL
+            FROM dual
+
+        </selectKey>
+
+        INSERT INTO notifications
+        (
+            notification_id,
+            question_id,
+            member_id,
+            type,
+            message,
+            is_read,
+            created_at,
+            updated_at
+        )
+        VALUES
+        (
+            #{notificationId},
+            NULL,
+            #{memberId},
+            'NEW_DEVICE_LOGIN',
+            #{message},
+            'N',
+            CURRENT_TIMESTAMP,
+            CURRENT_TIMESTAMP
+        )
+
+    </insert>
+
+</mapper>

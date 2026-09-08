@@ -1,0 +1,27 @@
+/.metadata/
+
+*.pem
+*.csv
+
+# Node
+node_modules/
+.next/
+out/
+
+# Build
+build/
+dist/
+
+# Java
+*.class
+build/
+.gradle/
+
+# IDE
+.idea/
+.vscode/
+
+# Environment
+.env
+.env.*
+!.env.example

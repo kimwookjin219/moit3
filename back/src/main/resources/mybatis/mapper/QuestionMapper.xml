@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.moit.qna.dao.QuestionMapper">
+
+	<!-- 관리자측 페이징 -->
+	<select id="findAll" resultType="com.moit.qna.dto.QuestionDto$QuestionResponseDto" parameterType="map">
+	    SELECT q.*, m.nickname, qa.analysis_status, qa.aggression_score, qa.ai_category
+	    FROM questions q
+	    LEFT JOIN members m ON q.member_id = m.member_id
+	    LEFT JOIN question_ai_analysis qa ON q.question_id = qa.question_id
+	    <where>
+	        q.delete_yn = 'N'
+	        <if test="type == 'title' and keyword != null and keyword != ''">
+	            AND q.title LIKE '%' || #{keyword} || '%'
+	        </if>
+	        <if test="type == 'content' and keyword != null and keyword != ''">
+	            AND q.content LIKE '%' || #{keyword} || '%'
+	        </if>
+	        <if test="type == 'nickname' and keyword != null and keyword != ''">
+	            AND m.nickname LIKE '%' || #{keyword} || '%'
+	        </if>
+	        <if test="status != null and status != '' and status != 'all'">
+	            AND q.qna_status = #{status}
+	        </if>
+	        <if test="aiCategory != null and aiCategory != '' and aiCategory != 'all'">
+			    AND qa.ai_category = #{aiCategory}
+			</if>
+	        <if test="startDate != null and startDate != ''">
+	            AND q.created_at >= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	        </if>
+	        <if test="endDate != null and endDate != ''">
+	            AND q.created_at <![CDATA[ < ]]> TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+	        </if>
+	    </where>
+	    ORDER BY q.question_id DESC
+	    OFFSET #{start} ROWS
+	    FETCH NEXT #{end} ROWS ONLY
+	</select>
+
+	<!-- 전체 문의 수-->
+	<select id="findAllCnt" resultType="int">
+	    SELECT COUNT(*)
+	    FROM questions
+	    WHERE delete_yn = 'N'
+	</select>
+	
+	<!-- 검색 문의 수-->
+	<select id="findSearchCnt" parameterType="map" resultType="int">
+	    SELECT COUNT(*)
+	    FROM questions q
+	    LEFT JOIN members m ON q.member_id = m.member_id
+	    LEFT JOIN question_ai_analysis qa ON q.question_id = qa.question_id
+	    <where>
+	        q.delete_yn = 'N'
+	        <if test="type == 'title' and keyword != null and keyword != ''">
+	            AND q.title LIKE '%' || #{keyword} || '%'
+	        </if>
+	        <if test="type == 'content' and keyword != null and keyword != ''">
+	            AND q.content LIKE '%' || #{keyword} || '%'
+	        </if>
+	        <if test="type == 'nickname' and keyword != null and keyword != ''">
+	            AND m.nickname LIKE '%' || #{keyword} || '%'
+	        </if>
+	        <if test="status != null and status != '' and status != 'all'">
+	            AND q.qna_status = #{status}
+	        </if>
+	        <if test="aiCategory != null and aiCategory != '' and aiCategory != 'all'">
+			    AND qa.ai_category = #{aiCategory}
+			</if>
+	        <if test="startDate != null and startDate != ''">
+	            AND q.created_at >= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+	        </if>
+	        <if test="endDate != null and endDate != ''">
+	            AND q.created_at <![CDATA[ < ]]> TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+	        </if>
+	    </where>
+	</select>
+
+	<!-- 답변 대기 문의 수 -->
+	<select id="findPendingCnt" resultType="int">
+	    SELECT COUNT(*)
+	    FROM questions
+	    WHERE qna_status = 'PENDING'
+	      AND delete_yn = 'N'
+	</select>
+	
+	<!-- 답변 완료 문의 수 -->
+	<select id="findAnsweredCnt" resultType="int">
+	    SELECT COUNT(*)
+	    FROM questions
+	    WHERE qna_status = 'ANSWERED'
+	      AND delete_yn = 'N'
+	</select>
+	
+	<!-- 오늘 등록된 문의 수 -->
+	<select id="findTodayCnt" resultType="int">
+	    SELECT COUNT(*)
+	    FROM questions
+	    WHERE TRUNC(created_at) = TRUNC(SYSDATE)
+	      AND delete_yn = 'N'
+	</select>
+		
+	<!-- 내 문의 총 개수 -->
+	<select id="findMyQuestionCnt" parameterType="map" resultType="int">
+	    SELECT COUNT(*)
+	    FROM questions
+	    <where>
+	        member_id = #{memberId}
+	        AND delete_yn = 'N'
+	        <if test="type == 'title' and keyword != null and keyword != ''">
+	            AND title LIKE '%' || #{keyword} || '%'
+	        </if>
+	        <if test="type == 'content' and keyword != null and keyword != ''">
+	            AND content LIKE '%' || #{keyword} || '%'
+	        </if>
+	    </where>
+	</select>
+
+	<!-- 내 문의 답변 대기 전체 건수 -->
+	<select id="findMyPendingCnt" parameterType="long" resultType="int">
+	    SELECT COUNT(*)
+	    FROM questions
+	    WHERE member_id = #{memberId}
+	      AND qna_status = 'PENDING'
+	      AND delete_yn = 'N'
+	</select>
+	
+	<!-- 내 문의 답변 완료 전체 건수 -->
+	<select id="findMyAnsweredCnt" parameterType="long" resultType="int">
+	    SELECT COUNT(*)
+	    FROM questions
+	    WHERE member_id = #{memberId}
+	      AND qna_status = 'ANSWERED'
+	      AND delete_yn = 'N'
+	</select>
+
+	<!-- 상세보기 조회 -->
+	<select id="findById" parameterType="long" resultType="com.moit.qna.dto.QuestionDto$QuestionResponseDto">
+	    SELECT q.*,
+	        NVL(qa.analysis_status, 'NORMAL') AS analysis_status,
+	        NVL(qa.aggression_score, 0) AS aggression_score
+	    FROM questions q
+	    LEFT JOIN question_ai_analysis qa
+	        ON q.question_id = qa.question_id
+	    WHERE q.question_id = #{questionId, jdbcType=NUMERIC}
+	      AND q.delete_yn = 'N'
+	</select>
+
+	<!-- 제목, 내용, 등록일 검색 (관리자용)-->
+	<select id="findBySearch" resultType="com.moit.qna.dto.QuestionDto$QuestionResponseDto">
+		SELECT
+		question_id, parent_id, member_id, category, title, content, qna_status,
+		is_public, delete_yn, created_at, updated_at
+		FROM questions
+		<where>
+			delete_yn = 'N'
+			<if test="title != null and title != ''">
+				AND title LIKE '%' || #{title} || '%'
+			</if>
+			<if test="content != null and content != ''">
+				AND content LIKE '%' || #{content} || '%'
+			</if>
+			<if test="createdAt != null">
+				AND TRUNC(created_at) = TRUNC(#{createdAt})
+			</if>
+		</where>
+		ORDER BY created_at DESC
+	</select>
+
+	<!--  제목, 내용 검색 (사용자용) -->
+	<select id="findMyQuestions" resultType="com.moit.qna.dto.QuestionDto$QuestionResponseDto" parameterType="map">
+	    SELECT q.*, qa.analysis_status, qa.aggression_score
+	    FROM questions q LEFT JOIN question_ai_analysis qa
+	    ON q.question_id = qa.question_id
+	    <where>
+	        q.member_id = #{memberId}
+	        AND q.delete_yn = 'N'
+	        <if test="type == 'title' and keyword != null and keyword != ''">
+	            AND q.title LIKE '%' || #{keyword} || '%'
+	        </if>
+	        <if test="type == 'content' and keyword != null and keyword != ''">
+	            AND q.content LIKE '%' || #{keyword} || '%'
+	        </if>
+	    </where>
+	    ORDER BY q.question_id DESC
+	    OFFSET #{start} ROWS
+	    FETCH NEXT #{end} ROWS ONLY
+	</select>
+
+	<!-- 문의글 작성 -->
+	<insert id="insertQuestion" parameterType="com.moit.qna.dto.QuestionDto$QuestionRequestDto">
+	<selectKey keyProperty="questionId"
+               resultType="long"
+               order="BEFORE">
+        SELECT question_seq.NEXTVAL FROM dual
+    </selectKey>
+    INSERT INTO questions
+    (question_id, parent_id, member_id, category, title, content, qna_status,
+     is_public, created_at, updated_at)
+    VALUES
+    (#{questionId}, #{parentId,jdbcType=BIGINT}, #{memberId}, #{category},
+     #{title}, #{content}, 'PENDING',
+     #{isPublic}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	</insert>
+
+	<!-- 문의 이미지 등록 -->
+	<insert id="insertQuestionImage" parameterType="com.moit.qna.dto.QuestionImageDto">
+	    INSERT INTO question_images (image_id, question_id, original_name, stored_name, image_path, image_size, content_type, delete_yn, created_at, updated_at)
+	    VALUES (question_image_seq.NEXTVAL, #{questionId}, #{originalName}, #{storedName}, #{imagePath}, #{imageSize}, #{contentType}, 'N', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	</insert>
+	
+	<!-- 문의 이미지 조회 -->
+	<select id="findQuestionImages" parameterType="long" resultType="com.moit.qna.dto.QuestionImageDto">
+	    SELECT image_id, question_id, original_name, stored_name, image_path, image_size, content_type, delete_yn, created_at, updated_at
+	    FROM question_images
+	    WHERE question_id = #{questionId}
+	      AND delete_yn = 'N'
+	    ORDER BY image_id ASC
+	</select>
+	
+	<!-- 문의 삭제 시 첨부파일 논리삭제 -->
+	<update id="deleteQuestionImages" parameterType="long">
+	    UPDATE question_images
+	    SET delete_yn = 'Y',
+	        updated_at = CURRENT_TIMESTAMP
+	    WHERE question_id = #{questionId}
+	      AND delete_yn = 'N'
+	</update>
+
+	<!-- 문의 수정 시 이미지 조회 (실제삭제용) -->
+	<select id="findQuestionImagesByIds" resultType="com.moit.qna.dto.QuestionImageDto">
+	    SELECT image_id, question_id, original_name, stored_name,
+	           image_path, image_size, content_type,
+	           delete_yn, created_at, updated_at
+	    FROM question_images
+	    WHERE image_id IN
+	    <foreach collection="list" item="imageId" open="(" separator="," close=")">
+	        #{imageId}
+	    </foreach>
+	    AND delete_yn = 'N'
+	</select>
+
+	<!-- 답변 달리면 상태 변경 -->
+	<update id="updateStatusAnswered">
+		UPDATE questions
+		SET qna_status = 'ANSWERED'
+		WHERE question_id = #{questionId}
+	</update>
+
+	<!-- 문의 수정 -->
+	<update id="updateQuestion" parameterType="com.moit.qna.dto.QuestionDto$QuestionRequestDto">
+		UPDATE questions
+		SET
+		title = #{title},
+		content = #{content},
+		is_public = #{isPublic},
+        updated_at = CURRENT_TIMESTAMP
+		WHERE question_id = #{questionId}
+	</update>
+
+	<!-- 문의 수정시 선택한 기존 이미지 논리삭제 -->
+	<update id="deleteQuestionImagesByIds">
+	    UPDATE question_images
+	    SET delete_yn = 'Y',
+	        updated_at = CURRENT_TIMESTAMP
+	    WHERE image_id IN
+	    <foreach collection="list" item="imageId" open="(" separator="," close=")">
+	        #{imageId}
+	    </foreach>
+	    AND delete_yn = 'N'
+	</update>
+
+	<!-- 문의 삭제 (논리삭제) -->
+	<update id="deleteQuestion">
+		UPDATE questions
+		SET delete_yn = 'Y'
+		WHERE question_id = #{questionId}
+	</update>
+	
+	<!-- 답변 삭제 시 문의 상태를 답변 대기로 변경 -->
+	<update id="updateStatusPending">
+	    UPDATE questions
+	    SET qna_status = 'PENDING'
+	    WHERE question_id = #{questionId}
+	</update>
+	
+	<!-- 관리자용 선택 삭제 -->
+	<update id="deleteSelected">
+	    UPDATE questions
+	    SET delete_yn='Y'
+	    WHERE question_id IN
+	    <foreach collection="list" item="id" open="(" separator="," close=")">
+	        #{id}
+	    </foreach>
+	</update>
+	
+	<!-- 모임 문의 목록(일반 사용자 + 모임장 + 관리자) -->
+	<select id="selectByMeetupQuestions" parameterType="map" resultType="com.moit.qna.dto.QuestionDto$QuestionResponseDto">
+	    SELECT q.*, m.nickname, qa.analysis_status, qa.aggression_score
+	    FROM questions q LEFT JOIN members m ON q.member_id = m.member_id
+			LEFT JOIN question_ai_analysis qa ON q.question_id = qa.question_id
+			LEFT JOIN meetups mt ON q.parent_id = mt.id
+	    WHERE q.parent_id = #{meetupId}
+	      AND q.category = 'MEETUP'
+	      AND q.delete_yn = 'N'
+
+	      <!-- 공개 문의는 모든 사용자 조회 가능 -->
+	      <!-- 비공개 문의는 본인, 해당 모임장 또는 관리자만 조회 가능 -->
+	      AND (
+	            q.is_public = 'Y'
+	            OR q.member_id = #{memberId}
+	            OR mt.member_id = #{memberId}
+	            OR #{memberTypeId} = 3
+	            OR #{memberTypeId} = 4
+	          )
+
+	      <!-- AI 검토 대기 문의는 일반 목록에서 제외 -->
+	      AND (
+	            qa.analysis_status IS NULL
+	            OR qa.analysis_status = 'NORMAL'
+	          )
+
+	    ORDER BY q.question_id DESC
+	</select>
+	
+	<!-- 답변이 등록된 문의 수정 불가 -->
+	<select id="findStatusByQuestionId" parameterType="long" resultType="string">
+	    SELECT qna_status
+	    FROM questions
+	    WHERE question_id = #{questionId}
+	      AND delete_yn = 'N'
+	</select>
+	
+	<!-- 중복 문의 확인 -->
+	<select id="countDuplicateQuestion" parameterType="map" resultType="int">
+	    SELECT COUNT(*)
+	    FROM questions
+	    WHERE member_id = #{memberId}
+	      AND title = #{title}
+	      AND DBMS_LOB.SUBSTR(content, 4000, 1) = #{content}
+	      AND delete_yn = 'N'
+	</select>
+	
+	<!-- 문의글 답변 -->
+	<!-- 문의글 답변 -->
+	
+	<!-- 문의글 답변 조회 -->
+	<select id="findByQuestionId" resultType="com.moit.qna.dto.AnswerDto$AnswerResponseDto">
+		select * from answers where question_id = #{questionId} and delete_yn = 'N'
+	</select>
+
+	<!-- 답변 등록 -->
+	<insert id="insertAnswer" parameterType="com.moit.qna.dto.AnswerDto$AnswerRequestDto">
+		insert into answers
+		( answer_id, question_id, member_id, content, is_public, delete_yn, created_at, updated_at )
+		values
+		( answer_seq.NEXTVAL, #{questionId}, #{memberId}, #{content}, (select is_public from questions where question_id = #{questionId}), 'N', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP )
+	</insert>
+
+	<!-- 답변 수정 -->
+	<update id="updateAnswer" parameterType="com.moit.qna.dto.AnswerDto$AnswerRequestDto">
+		update answers
+		set content = #{content}
+		where answer_id = #{answerId}
+	</update>
+
+	<!-- 답변 삭제(논리삭제) -->
+	<update id="deleteAnswer">
+		update answers
+		set delete_yn = 'Y'
+		where answer_id = #{answerId}
+	</update>
+
+	<!-- 질문 ID로 답변 조회(삭제 포함) -->
+	<select id="findByQuestionIdAll" resultType="com.moit.qna.dto.AnswerDto$AnswerResponseDto">
+		select *
+		from answers
+		where question_id = #{questionId}
+	</select>
+
+	<!-- 삭제된 답변 복구용 -->
+	<update id="restoreAnswer" parameterType="com.moit.qna.dto.AnswerDto$AnswerRequestDto">
+		update answers
+		set content = #{content},
+		delete_yn = 'N'
+		where question_id = #{questionId}
+	</update>	
+	
+	<!-- 회원별 알림이 10개를 초과하면 가장 오래된 알림 삭제 -->
+	<delete id="deleteOldestNotification" parameterType="long">
+	    DELETE FROM notifications
+	    WHERE notification_id = (
+	        SELECT notification_id
+	        FROM (
+	            SELECT notification_id
+	            FROM notifications
+	            WHERE member_id = #{memberId}
+	            ORDER BY created_at ASC
+	        )
+	        WHERE ROWNUM = 1
+	    )
+	</delete>
+	
+	<!-- 답변 삭제 시 알림도 삭제 -->
+	<delete id="deleteAnswerNotification">
+	    DELETE FROM notifications
+	    WHERE question_id = #{questionId}
+	      AND type = 'ANSWER_CREATED'
+	</delete>
+	
+	<!-- 문의 삭제 시 알림도 삭제-->
+	<delete id="deleteNotificationsByQuestionId">
+	    DELETE FROM notifications
+	    WHERE question_id = #{questionId}
+	</delete>
+	
+	<!-- 회원의 전체 알림 개수 -->
+	<select id="countNotifications" parameterType="long" resultType="int">
+	    SELECT COUNT(*)
+	    FROM notifications
+	    WHERE member_id = #{memberId}
+	</select>
+
+	<!-- 답변 알림(비동기) -->
+	<!-- 답변 알림(비동기) -->
+
+	<!-- 알림 등록 -->
+	<insert id="insertNotification" parameterType="NotificationDto">
+	    <selectKey keyProperty="notificationId" resultType="long" order="BEFORE">
+	        SELECT notification_seq.NEXTVAL
+	        FROM dual
+	    </selectKey>
+		    INSERT INTO notifications
+		    ( notification_id, question_id, member_id, type, message, is_read, created_at, updated_at )
+		    VALUES
+		    ( #{notificationId}, #{questionId}, #{memberId}, #{type}, #{message}, 'N', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP )
+	</insert>
+	
+	<select id="selectUnread" parameterType="long" resultType="com.moit.qna.dto.NotificationDto">
+	    SELECT *
+	    FROM notifications
+	    WHERE member_id=#{memberId}
+	      AND is_read='N'
+	    ORDER BY created_at DESC
+	</select>
+
+	<select id="selectAll" parameterType="long" resultType="com.moit.qna.dto.NotificationDto">
+		SELECT *
+		FROM notifications
+		WHERE member_id=#{memberId}
+		ORDER BY created_at DESC
+	</select>
+
+	<update id="readNotification" parameterType="map">
+	    UPDATE notifications
+	    SET is_read='Y'
+	    WHERE notification_id=#{notificationId}
+	    AND member_id = #{memberId}
+	</update>
+	
+	<!-- 회원의 읽지 않은 알림 전체 읽음 처리 -->
+	<update id="readAllNotifications" parameterType="long">
+	    UPDATE notifications
+	    SET
+	        is_read = 'Y',
+	        updated_at = CURRENT_TIMESTAMP
+	    WHERE member_id = #{memberId}
+	      AND is_read = 'N'
+	</update>
+	
+	<delete id="deleteNotification">
+	    DELETE FROM notifications
+	    WHERE notification_id = #{notificationId}
+	      AND member_id = #{memberId}
+	</delete>
+	
+	<select id="unreadCount" parameterType="long" resultType="int">
+		SELECT COUNT(*)
+		FROM notifications
+		WHERE member_id=#{memberId}
+		AND is_read='N'
+	</select>
+	
+	<!-- AI 공격성 점수 -->
+	<!-- AI 공격성 점수 -->
+
+    <insert id="insertAiAnalysis" parameterType="QuestionAiAnalysisDto">
+        INSERT INTO question_ai_analysis
+        ( question_id, analysis_status, aggression_score, ai_category )
+        VALUES
+        ( #{questionId}, #{analysisStatus}, #{aggressionScore}, #{aiCategory})
+    </insert>
+
+	<update id="changeToNormal">
+	    UPDATE QUESTION_AI_ANALYSIS
+	    SET ANALYSIS_STATUS='NORMAL'
+	    WHERE QUESTION_ID=#{questionId}
+	</update>
+	
+</mapper>
+
