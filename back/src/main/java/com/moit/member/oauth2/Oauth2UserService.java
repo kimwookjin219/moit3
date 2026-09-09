@@ -73,8 +73,17 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
         Member member = memberRepository.findByProviderAndProviderId( provider, providerId ) 
         					.orElse(null);
 
+                            System.out.println("========== OAuth2 DEBUG ==========");
+System.out.println("provider = " + provider);
+System.out.println("providerId = " + providerId);
+System.out.println("email = " + email);
+System.out.println("nickname = " + nickname);
+System.out.println("member = " + member);
+
         // 신규 소셜 회원
         if (member == null) {
+
+            System.out.println(">>> 신규 소셜 회원 처리 시작");
             UserDto socialUser = new UserDto();
             
             socialUser.setLoginId(provider + "_" + providerId);
@@ -101,6 +110,9 @@ public class Oauth2UserService extends DefaultOAuth2UserService {
             Map<String, Object> attributes = createAttributes(
                             provider, providerId, email, nickname, profileUrl
                     );
+
+                    System.out.println(">>> CustomUserDetails 생성 완료");
+System.out.println(">>> OAuth2UserService 종료");
             return new CustomUserDetails( tempUser, attributes );
         }
 
