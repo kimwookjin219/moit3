@@ -33,7 +33,6 @@ import {
     checkLoginIdRequest,
     checkEmailRequest,
     checkNicknameRequest,
-    checkMobileRequest,
     resetDuplicateCheck,
     resetEmailVerification,
     checkPasswordLeakRequest,
@@ -311,27 +310,6 @@ function AdminSignup() {
         );
     };
 
-
-    // =========================================================
-    // 전화번호 중복확인
-    // =========================================================
-    const handleCheckMobile = () => {
-
-        if (!mobile.trim()) {
-
-            message.warning("전화번호를 입력해주세요.");
-
-            return;
-        }
-
-        dispatch(
-            checkMobileRequest(
-                mobile.trim()
-            )
-        );
-    };
-
-
     // =========================================================
     // 이메일 인증번호 발송
     // =========================================================
@@ -450,18 +428,6 @@ function AdminSignup() {
 
             return;
         }
-
-
-        // 전화번호 중복확인
-        if (!duplicateCheck.mobile) {
-
-            message.error(
-                "전화번호 중복확인을 완료해주세요."
-            );
-
-            return;
-        }
-
 
         // 비밀번호 유출검사
         if (!passwordLeak.checked) {
@@ -1046,9 +1012,7 @@ function AdminSignup() {
                                         e.target.value
                                     )
                                 }
-                                disabled={
-                                    !emailVerification.sent
-                                }
+                                disabled={!emailVerification.sent || emailVerification.verified}
                             />
 
                             <Button
@@ -1059,9 +1023,7 @@ function AdminSignup() {
                                 onClick={
                                     handleSendEmailCode
                                 }
-                                disabled={
-                                    !duplicateCheck.email
-                                }
+                                disabled={!duplicateCheck.email || emailVerification.verified}
                             >
                                 인증번호 발송
                             </Button>
@@ -1074,9 +1036,7 @@ function AdminSignup() {
                                 onClick={
                                     handleVerifyEmail
                                 }
-                                disabled={
-                                    !emailVerification.sent
-                                }
+                                disabled={!emailVerification.sent || emailVerification.verified}
                             >
                                 인증확인
                             </Button>
@@ -1123,65 +1083,17 @@ function AdminSignup() {
                         rules={[
                             {
                                 required: true,
-                                message:
-                                    "전화번호를 입력해주세요.",
+                                message: "전화번호를 입력해주세요.",
                             },
                         ]}
                     >
-
-                        <Space.Compact
-                            style={{
-                                width: "100%",
-                            }}
-                        >
-
-                            <Input
-                                prefix={
-                                    <PhoneOutlined />
-                                }
-                                placeholder="전화번호를 입력해주세요."
-                                value={mobile}
-                                onChange={
-                                    handleMobileChange
-                                }
-                            />
-
-                            <Button
-                                type="primary"
-                                onClick={
-                                    handleCheckMobile
-                                }
-                            >
-                                중복확인
-                            </Button>
-
-                        </Space.Compact>
-
+                        <Input
+                            prefix={<PhoneOutlined />}
+                            placeholder="전화번호를 입력해주세요."
+                            value={mobile}
+                            onChange={handleMobileChange}
+                        />
                     </Form.Item>
-
-
-                    {duplicateCheck.mobile === true && (
-
-                        <Text type="success">
-
-                            <CheckOutlined />
-
-                            {" "}
-                            사용 가능한 전화번호입니다.
-
-                        </Text>
-
-                    )}
-
-
-                    {duplicateCheck.mobile === false && (
-
-                        <Text type="danger">
-                            이미 사용 중인 전화번호입니다.
-                        </Text>
-
-                    )}
-
 
                     {/* =================================================
                         생년월일
