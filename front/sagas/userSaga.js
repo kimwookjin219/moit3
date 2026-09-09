@@ -87,6 +87,14 @@ function getMyPageApi() {
 // 회원가입 API
 // =========================
 function signupApi(signupData){
+
+    if (signupData.memberTypeId === 3) {
+        return api.post(
+            "/api/admin/members/signup",
+            signupData
+        );
+    }
+    
     return api.post("/api/members/signup",signupData);
 }
 
