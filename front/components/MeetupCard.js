@@ -14,8 +14,8 @@ function MeetupCard({ meetup, onClick, onToggleLike }) {
                     <img
                         src={
                             meetup.imagePath
-                                ? `http://localhost:8080/upload/meetup/${meetup.imagePath}`
-                                : "http://localhost:8080/upload/no-image.png"
+                                ? `/upload/meetup/${meetup.imagePath}`
+                                : "/upload/no-image.png"
                         }
                         alt={meetup.title}
                     />

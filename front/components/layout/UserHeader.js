@@ -218,10 +218,7 @@ function UserHeader() {
       return profileUrl;
     }
 
-    const imageUrl =
-      `${process.env.NEXT_PUBLIC_API_BASE_URL}${profileUrl}`;
-
-    return imageUrl;
+    return profileUrl.startsWith("/") ? profileUrl : `/${profileUrl}`;
   };
 
   // =========================================================

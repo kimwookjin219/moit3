@@ -20,7 +20,7 @@ import {
 
 const { Text, Paragraph } = Typography;
 
-const BACKEND_URL = 'http://localhost:8080'; // 본인 백엔드 주소
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_BASE_URL; // 본인 백엔드 주소
 
 // 목록 페이지와 동일하게 업그레이드된 이미지 URL 처리 유틸 함수
 const getImageUrl = (imgItem) => {

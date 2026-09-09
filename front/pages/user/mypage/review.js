@@ -69,7 +69,7 @@ function UserMyReviewPage() {
   const fetchNotifications = async () => {
     if (!memberId) return;
     try {
-      const response = await axios.get(`http://localhost:8080/api/notifications/reviews?memberId=${memberId}`);
+      const response = await axios.get(`/api/notifications/reviews?memberId=${memberId}`);
       setNotifications(response.data);
     } catch (error) {
       console.error('알림 조회 실패:', error);
@@ -80,7 +80,7 @@ function UserMyReviewPage() {
   // 🌟 [수정된 알림 클릭 핸들러] 클릭 시 백엔드 읽음 처리 API 호출 후 알림 ID와 함께 리뷰 작성 페이지로 이동
   const handleNotificationClick = async (notificationId, meetupId) => {
     try {
-      await axios.patch(`http://localhost:8080/api/notifications/reviews/${notificationId}/read`);
+      await axios.patch(`/api/notifications/reviews/${notificationId}/read`);
     } catch (error) {
       console.error('알림 읽음 처리 실패:', error);
     } finally {

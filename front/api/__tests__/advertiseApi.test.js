@@ -38,7 +38,7 @@ describe('advertiseApi', () => {
         });
 
         expect(axios.get).toHaveBeenCalledWith(
-            'http://localhost:8080/api/advertisement',
+            '/api/advertisement',
             {
                 params: {
                     page: 1,
@@ -65,7 +65,7 @@ describe('advertiseApi', () => {
         const result = await getAdvertiseDetail(1);
 
         expect(axios.get).toHaveBeenCalledWith(
-            'http://localhost:8080/api/advertisement/1'
+            '/api/advertisement/1'
         );
 
         expect(result).toEqual(response);
@@ -85,7 +85,7 @@ describe('advertiseApi', () => {
         await createAdvertise(formData);
 
         expect(axios.post).toHaveBeenCalledWith(
-            'http://localhost:8080/api/advertisement',
+            '/api/advertisement',
             formData,
             {
                 headers: {
@@ -109,7 +109,7 @@ describe('advertiseApi', () => {
         await updateAdvertise(1, formData);
 
         expect(axios.put).toHaveBeenCalledWith(
-            'http://localhost:8080/api/advertisement/1',
+            '/api/advertisement/1',
             formData,
             {
                 headers: {
@@ -129,7 +129,7 @@ describe('advertiseApi', () => {
         await deleteAdvertise(1);
 
         expect(axios.delete).toHaveBeenCalledWith(
-            'http://localhost:8080/api/advertisement/1'
+            '/api/advertisement/1'
         );
     });
 

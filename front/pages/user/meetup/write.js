@@ -91,7 +91,7 @@ function write() {
                     uid: `existing-${index}`,
                     name: imagePath,
                     status: "done",
-                    url: `http://localhost:8080/upload/meetup/${imagePath}`,
+                    url: `/upload/meetup/${imagePath}`,
                 }),
             );
 

@@ -238,9 +238,9 @@ function MeetupDetailPage() {
         meetup?.imagePaths?.length > 0
             ? meetup.imagePaths.map(
                   (imagePath) =>
-                      `http://localhost:8080/upload/meetup/${imagePath}`,
+                      `/upload/meetup/${imagePath}`,
               )
-            : ["http://localhost:8080/upload/no-image.png"];
+            : ["/upload/no-image.png"];
 
     const rawReviews =
         reduxReviews?.map((review) => ({

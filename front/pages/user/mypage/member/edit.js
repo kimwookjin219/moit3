@@ -96,7 +96,7 @@ function UserMyMemberEditPage() {
     if (profileUrl) {
       if (profileUrl.startsWith('/images/profile/')) {
         setProfilePreview(
-          `http://localhost:8080${profileUrl}`
+          `${profileUrl}`
         );
       } else {
         setProfilePreview(profileUrl);

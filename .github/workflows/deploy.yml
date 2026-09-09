@@ -199,11 +199,6 @@ jobs:       # 실행할 job 정의
         with:
           node-version: '18'
 
-      # 🔑 Secrets 기반으로 .env.production 먼저 생성
-      - name: Create Frontend .env.production
-        run: |
-          echo "NEXT_PUBLIC_API_BASE_URL=${{ secrets.NEXT_PUBLIC_API_BASE_URL }}" > front/.env.production
-
       # 빌드 전에 .env.production이 반영되도록 순서 조정   
       - name: Build Frontend
         run: |
@@ -229,7 +224,7 @@ jobs:       # 실행할 job 정의
       - name: Archive frontend build
         run: |
           cd front
-          tar -czf ../frontend-build.tar.gz .next public package.json .env.production
+          tar -czf ../frontend-build.tar.gz .next public package.json
 
       - name: Copy frontend archive to EC2
         uses: appleboy/scp-action@v0.1.7

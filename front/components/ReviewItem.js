@@ -6,26 +6,24 @@ import ReviewComments from './ReviewComment';
 
 const { Text, Paragraph } = Typography;
 
-const BACKEND_URL = 'http://localhost:8080';
-
 const getImageUrl = (imgItem) => {
   if (!imgItem) return null;
   const target = imgItem.image || imgItem;
-  if (typeof target === 'number') return `${BACKEND_URL}/api/images/${target}`;
+  if (typeof target === 'number') return `/api/images/${target}`;
   if (typeof target === 'string') {
     if (target.startsWith('http')) return target;
-    if (!isNaN(target)) return `${BACKEND_URL}/api/images/${target}`;
-    return `${BACKEND_URL}${target.startsWith('/') ? '' : '/'}${target}`;
+    if (!isNaN(target)) return `/api/images/${target}`;
+    return `${target.startsWith('/') ? '' : '/'}${target}`;
   }
   const url = target.filePath || target.imageUrl || target.url || target.path || target.imagePath;
   if (url) {
     if (url.startsWith('http')) return url;
     const cleanPath = url.startsWith('/') ? url : `/${url}`;
-    if (cleanPath.startsWith('/upload')) return `${BACKEND_URL}${cleanPath}`;
-    return `${BACKEND_URL}/upload/review${cleanPath}`;
+    if (cleanPath.startsWith('/upload')) return `${cleanPath}`;
+    return `/upload/review${cleanPath}`;
   }
   const id = target.imageId || target.id || target.reviewImageId;
-  if (id) return `${BACKEND_URL}/api/images/${id}`;
+  if (id) return `/api/images/${id}`;
   return null;
 };
 

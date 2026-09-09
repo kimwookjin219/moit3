@@ -14,8 +14,6 @@ function AdvertisePriceModal({ open, onClose }) {
   const [positionPrices, setPositionPrices] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
-
   // 위치명 한글 변환 헬퍼
   const getPositionLabel = (key) => {
     if (key === 'MAIN') return '메인 홈 배너';
@@ -36,7 +34,7 @@ function AdvertisePriceModal({ open, onClose }) {
     setLoading(true);
     try {
       // 1. 기간별 기본 가격 호출
-      const periodRes = await axios.get(`${BASE_URL}/api/admin/advertisement/price`, { withCredentials: true });
+      const periodRes = await axios.get(`/api/admin/advertisement/price`, { withCredentials: true });
       const newMap = {};
       const extMap = {};
 
@@ -60,7 +58,7 @@ function AdvertisePriceModal({ open, onClose }) {
       setExtensionPrices(Object.values(extMap).sort((a, b) => a.days - b.days));
 
       // 2. 위치별 추가금 호출
-      const posRes = await axios.get(`${BASE_URL}/api/admin/advertisement/price/position`, { withCredentials: true });
+      const posRes = await axios.get(`/api/admin/advertisement/price/position`, { withCredentials: true });
       const mappedPos = posRes.data.map(item => ({
         key: item.position,
         label: getPositionLabel(item.position),
@@ -88,7 +86,7 @@ function AdvertisePriceModal({ open, onClose }) {
         list.forEach((item) => {
           // 일반 가격 수정
           if (item.generalPriceId) {
-            promises.push(axios.put(`${BASE_URL}/api/admin/advertisement/price/${item.generalPriceId}`, {
+            promises.push(axios.put(`/api/admin/advertisement/price/${item.generalPriceId}`, {
               priceId: item.generalPriceId,       // 백엔드 DTO에 맞춰 명시적 추가
               paymentType: paymentType,
               adGrade: 'GENERAL',
@@ -98,7 +96,7 @@ function AdvertisePriceModal({ open, onClose }) {
           }
           // 프리미엄 가격 수정
           if (item.premiumPriceId) {
-            promises.push(axios.put(`${BASE_URL}/api/admin/advertisement/price/${item.premiumPriceId}`, {
+            promises.push(axios.put(`/api/admin/advertisement/price/${item.premiumPriceId}`, {
               priceId: item.premiumPriceId,       // 백엔드 DTO에 맞춰 명시적 추가
               paymentType: paymentType,
               adGrade: 'PREMIUM',
@@ -116,7 +114,7 @@ function AdvertisePriceModal({ open, onClose }) {
       // 2. 위치 추가금 업데이트 예약
       positionPrices.forEach((item) => {
         if (item.positionPriceId) {
-          promises.push(axios.put(`${BASE_URL}/api/admin/advertisement/price/position/${item.positionPriceId}`, {
+          promises.push(axios.put(`/api/admin/advertisement/price/position/${item.positionPriceId}`, {
             positionPriceId: item.positionPriceId, // 백엔드 DTO에 맞춰 명시적 추가
             position: item.key,                    // Enum 이름 명시적 추가 (MAIN 등)
             additionalPrice: Number(item.price)    // 무조건 숫자형으로 강제 변환!

@@ -229,7 +229,7 @@ function questionEdit() {
                     >
 
                       <a
-                        href={`http://localhost:8080${image.imagePath}`}
+                        href={`${image.imagePath}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{

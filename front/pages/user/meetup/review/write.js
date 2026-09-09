@@ -66,7 +66,7 @@ function ReviewWritePage() {
     const checkMeetupStatus = async () => {
       try {
         const token = localStorage.getItem('accessToken') || localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:8080/api/meetups/${targetMeetupId}`, {
+        const response = await axios.get(`/api/meetups/${targetMeetupId}`, {
           headers: {
             'Authorization': token ? `Bearer ${token}` : '',
           },
@@ -114,7 +114,7 @@ function ReviewWritePage() {
           const rawUrl = img.imageUrl || '';
           const fullImageUrl = rawUrl.startsWith('http') 
             ? rawUrl 
-            : `http://localhost:8080/upload/review/${rawUrl}`;
+            : `/upload/review/${rawUrl}`;
 
           return {
             uid: `-${idx}`,
@@ -139,7 +139,7 @@ function ReviewWritePage() {
         // 마이페이지 알림을 통해 진입해 리뷰를 등록한 경우, 서버에 읽음 처리 요청
         if (queryNotificationId) {
           try {
-            await axios.patch(`http://localhost:8080/api/notifications/reviews/${queryNotificationId}/read`);
+            await axios.patch(`/api/notifications/reviews/${queryNotificationId}/read`);
           } catch (err) {
             console.error('리뷰 등록 후 알림 읽음 처리 실패:', err);
           }
@@ -233,7 +233,7 @@ function ReviewWritePage() {
 
         const token = localStorage.getItem('accessToken') || localStorage.getItem('token');
 
-        const imageResponse = await axios.post('http://localhost:8080/api/reviews/images', formData, {
+        const imageResponse = await axios.post('/api/reviews/images', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             'Authorization': token ? `Bearer ${token}` : '', 

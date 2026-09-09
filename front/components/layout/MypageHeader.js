@@ -50,7 +50,7 @@ function MypageHeader({ user, point = 0 }) {
             return profileUrl;
         }
 
-        return `${process.env.NEXT_PUBLIC_API_BASE_URL}${profileUrl}`;
+        return profileUrl.startsWith("/") ? profileUrl : `/${profileUrl}`;
     };
 
     return (

@@ -1,8 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL:
-    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080",
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
 
   // HttpOnly Cookie를 서버와 주고받기 위해 필요
   withCredentials: true,
@@ -190,11 +189,7 @@ api.interceptors.response.use(
       // ===================================================
       const response =
         await axios.post(
-
-          `${
-            process.env.NEXT_PUBLIC_API_BASE_URL ||
-            "http://localhost:8080"
-          }/api/members/refresh`,
+          "/api/members/refresh",
 
           {
             deviceId: deviceId,
@@ -204,8 +199,7 @@ api.interceptors.response.use(
             withCredentials: true,
 
             headers: {
-              "Content-Type":
-                "application/json",
+              "Content-Type": "application/json",
 
               Accept:
                 "application/json",

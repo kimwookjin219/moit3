@@ -13,9 +13,6 @@ function AdBanner({ position }) {
 
     const [ad, setAd] = useState(null);
 
-    const API_BASE_URL =
-        process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
-
     // 한 번의 화면 렌더링에서 노출 API 중복 호출 방지
     const impressionSent = useRef(false);
 
@@ -175,7 +172,7 @@ function AdBanner({ position }) {
                     {adImage?.imageUrl ? (
 
                         <img
-                            src={`${API_BASE_URL}${adImage.imageUrl}`}
+                            src={adImage.imageUrl}
                             alt={ad.title || "광고"}
                             className={`ad-image ad-${position}`}
                         />
