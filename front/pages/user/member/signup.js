@@ -1452,11 +1452,18 @@ return (
                     <Space.Compact style={{ width: "100%" }}>
 
                         <Input
-                            placeholder="인증번호 6자리를 입력해주세요."
+                            placeholder={
+                                emailVerification.verified
+                                    ? "이메일 인증이 완료되었습니다."
+                                    : "인증번호 6자리를 입력해주세요."
+                            }
                             maxLength={6}
                             value={verificationCode}
                             onChange={(e) => {setVerificationCode(e.target.value);}}
-                            disabled={!emailVerification.sent}
+                            disabled={
+                                !emailVerification.sent ||
+                                emailVerification.verified
+                            }
                         />
 
                         <Button
@@ -1472,9 +1479,14 @@ return (
                             type="primary"
                             loading={emailVerification.verifying}
                             onClick={handleVerifyEmail}
-                            disabled={!emailVerification.sent}
+                            disabled={
+                                !emailVerification.sent ||
+                                emailVerification.verified
+                            }
                         >
-                            인증확인
+                            {emailVerification.verified
+                                ? "인증 완료"
+                                : "인증확인"}
                         </Button>
 
                     </Space.Compact>
