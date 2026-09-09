@@ -30,25 +30,16 @@ export default function SocialInfo() {
 
   useEffect(() => {loadSocialUser();}, []);
 
-  useEffect(() => {
-  console.log("🔥 socialUser 상태:", socialUser);
-}, [socialUser]);
-
   const loadSocialUser = async () => {
     try {
       const response = await api.get("/api/members/social-info");
-
-      console.log("🔥 social-info 응답:", response.data);
-
+      
       setSocialUser(response.data);
 
       form.setFieldsValue({
         email: response.data.email,
         nickname: response.data.nickname,
       });
-
-      console.log("🔥 socialUser 설정 완료");
-
     } catch (error) {
       console.error("소셜 회원정보 조회 실패:", error);
 
@@ -100,7 +91,6 @@ export default function SocialInfo() {
   };
 
   if (!socialUser) {return null;}
-
 
   return (
     <div

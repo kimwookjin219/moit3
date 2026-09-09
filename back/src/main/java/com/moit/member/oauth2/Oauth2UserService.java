@@ -82,8 +82,7 @@ System.out.println("member = " + member);
 
         // 신규 소셜 회원
         if (member == null) {
-
-            System.out.println(">>> 신규 소셜 회원 처리 시작");
+            
             UserDto socialUser = new UserDto();
             
             socialUser.setLoginId(provider + "_" + providerId);
@@ -110,9 +109,6 @@ System.out.println("member = " + member);
             Map<String, Object> attributes = createAttributes(
                             provider, providerId, email, nickname, profileUrl
                     );
-
-                    System.out.println(">>> CustomUserDetails 생성 완료");
-System.out.println(">>> OAuth2UserService 종료");
             return new CustomUserDetails( tempUser, attributes );
         }
 

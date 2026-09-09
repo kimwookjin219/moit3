@@ -37,9 +37,6 @@ public class SocialLoginSuccessHandler implements AuthenticationSuccessHandler{
             HttpServletResponse response,
             Authentication authentication)
             throws IOException {
-
-                System.out.println("========== SOCIAL SUCCESS ==========");
-System.out.println("principal = " + authentication.getPrincipal());
 		
 		CustomUserDetails user = (CustomUserDetails) authentication.getPrincipal();	
 		
@@ -54,9 +51,6 @@ System.out.println("principal = " + authentication.getPrincipal());
 		
 		// 신규 소셜 회원
         if (user.getAppUserId() == 0L) {
-
-            System.out.println(">>> 신규 소셜 회원");
-    System.out.println(">>> /user/member/social-info 로 이동");
 
             // 소셜 회원정보 세션 저장
             session.setAttribute("socialUser", user.getUser());          
