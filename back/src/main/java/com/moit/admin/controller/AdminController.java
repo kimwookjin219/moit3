@@ -28,6 +28,8 @@ public class AdminController {
     )
     @PostMapping("/signup")
     public ResponseEntity<?> adminSignup(@RequestBody UserDto dto) {
+    	
+    	System.out.println("========== 관리자 회원가입 Controller 진입 ==========");
 
         // 관리자 권한은 서버에서 강제로 지정
         dto.setMemberTypeId(3L);
