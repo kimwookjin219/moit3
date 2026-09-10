@@ -8,8 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.moit.member.dto.UserRequestDto; 
-import com.moit.member.dto.UserResponseDto;
+import com.moit.member.dto.UserDto;
 import com.moit.member.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,19 +18,21 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/admin/members")
 public class AdminController {
-	
-	private final UserService service;
 
-	// 관리자 회원가입 
-	@Operation( summary = "관리자 회원가입", 
-				description = "관리자 계정으로 새로운 회원을 등록합니다." )
+    private final UserService service;
+
+    // 관리자 회원가입
+    @Operation(
+        summary = "관리자 회원가입",
+        description = "관리자 계정으로 새로운 회원을 등록합니다."
+    )
     @PostMapping("/signup")
-    public ResponseEntity<UserResponseDto> adminSignup(@RequestBody UserRequestDto request) {
+    public ResponseEntity<?> adminSignup(@RequestBody UserDto dto) {
 
-        // 관리자 권한 고정
-        request.setMemberTypeId(3L);
+        // 관리자 권한은 서버에서 강제로 지정
+        dto.setMemberTypeId(3L);
 
-        int result = service.insert(request);
+        int result = service.insert(dto);
 
         if (result == 0) {
             return ResponseEntity.badRequest()
