@@ -13,16 +13,16 @@ import {
   Statistic,
 } from 'antd';
 
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts';
+// import {
+//   BarChart,
+//   Bar,
+//   XAxis,
+//   YAxis,
+//   CartesianGrid,
+//   Tooltip,
+//   Legend,
+//   ResponsiveContainer,
+// } from 'recharts';
 
 import {
   getPointHistoryRequest,
@@ -154,74 +154,74 @@ function pointHistory() {
   // =========================
   // 월별 그래프 데이터
   // =========================
-  const chartData = useMemo(() => {
-    const monthlyData = {};
+  // const chartData = useMemo(() => {
+  //   const monthlyData = {};
 
-    history.forEach((item) => {
-      if (!item.createdAt) {
-        return;
-      }
+  //   history.forEach((item) => {
+  //     if (!item.createdAt) {
+  //       return;
+  //     }
 
-      const date = new Date(item.createdAt);
+  //     const date = new Date(item.createdAt);
 
-      if (Number.isNaN(date.getTime())) {
-        return;
-      }
+  //     if (Number.isNaN(date.getTime())) {
+  //       return;
+  //     }
 
-      const year = date.getFullYear();
-      const month = date.getMonth() + 1;
+  //     const year = date.getFullYear();
+  //     const month = date.getMonth() + 1;
 
-      const key = `${year}-${String(month).padStart(2, '0')}`;
+  //     const key = `${year}-${String(month).padStart(2, '0')}`;
 
-      if (!monthlyData[key]) {
-        monthlyData[key] = {
-          month: `${year}년 ${month}월`,
-          earn: 0,
-          use: 0,
-        };
-      }
+  //     if (!monthlyData[key]) {
+  //       monthlyData[key] = {
+  //         month: `${year}년 ${month}월`,
+  //         earn: 0,
+  //         use: 0,
+  //       };
+  //     }
 
-      const value = Math.abs(
-        Number(item.pointPm) || 0
-      );
+  //     const value = Math.abs(
+  //       Number(item.pointPm) || 0
+  //     );
 
-      const type = item.pointType;
+  //     const type = item.pointType;
 
-      // 적립
-      if (
-        type === 'PLUS' ||
-        type === 'EARN' ||
-        type === '적립'
-      ) {
-        monthlyData[key].earn += value;
-      }
+  //     // 적립
+  //     if (
+  //       type === 'PLUS' ||
+  //       type === 'EARN' ||
+  //       type === '적립'
+  //     ) {
+  //       monthlyData[key].earn += value;
+  //     }
 
-      // 사용
-      else if (
-        type === 'MINUS' ||
-        type === 'USE' ||
-        type === '사용'
-      ) {
-        monthlyData[key].use += value;
-      }
+  //     // 사용
+  //     else if (
+  //       type === 'MINUS' ||
+  //       type === 'USE' ||
+  //       type === '사용'
+  //     ) {
+  //       monthlyData[key].use += value;
+  //     }
 
-      // 유형이 없는 경우
-      else {
-        const originalValue =
-          Number(item.pointPm) || 0;
+  //     // 유형이 없는 경우
+  //     else {
+  //       const originalValue =
+  //         Number(item.pointPm) || 0;
 
-        if (originalValue >= 0) {
-          monthlyData[key].earn += value;
-        } else {
-          monthlyData[key].use += value;
-        }
-      }
-    });
+  //       if (originalValue >= 0) {
+  //         monthlyData[key].earn += value;
+  //       } else {
+  //         monthlyData[key].use += value;
+  //       }
+  //     }
+  //   });
 
-    return Object.keys(monthlyData)
-      .sort()
-      .map((key) => monthlyData[key]);
-  }, [history]);
+  //   return Object.keys(monthlyData)
+  //     .sort()
+  //     .map((key) => monthlyData[key]);
+  // }, [history]);
 
   // =========================
   // 에러
@@ -447,7 +447,7 @@ function pointHistory() {
             {/* =========================
                 포인트 그래프
             ========================= */}
-            <Card
+            {/* <Card
               size="small"
               title="월별 포인트 적립 및 사용"
               style={{
@@ -507,7 +507,7 @@ function pointHistory() {
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-            </Card>
+            </Card> */}
           </>
         )}
 
