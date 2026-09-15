@@ -62,10 +62,13 @@ public class MemberServiceImpl implements MemberService{
 	@Override
 	public UserDto signup(UserDto dto) {
 		
-		// 휴대폰 인증 여부 확인
-	    if (!phoneVerificationService.isPhoneVerified(dto.getMobile())) {
-	        throw new IllegalArgumentException("휴대폰 인증이 완료되지 않았습니다.");
-	    }
+		// 일반회원(1), 제휴업체(2)는 휴대폰 인증 필수
+		// 관리자(3)는 휴대폰 인증 없이 가입 가능
+		if (dto.getMemberTypeId() != 3L) {
+		    if (!phoneVerificationService.isPhoneVerified(dto.getMobile())) {
+		        throw new IllegalArgumentException("휴대폰 인증이 완료되지 않았습니다.");
+		    }
+		}
 		
 		//회원 유형 조회
 		MemberType memberType = memberTypeRepository.findById(dto.getMemberTypeId())
@@ -164,8 +167,10 @@ public class MemberServiceImpl implements MemberService{
 			}
 		}
 		
-		// 휴대폰 인증 완료 상태 삭제
-		phoneVerificationService.removePhoneVerified(dto.getMobile());		
+		// 일반회원/제휴업체만 휴대폰 인증 완료 상태 삭제
+		if (dto.getMemberTypeId() != 3L) {
+		    phoneVerificationService.removePhoneVerified(dto.getMobile());
+		}		
 		
 		// DTO에 반영
 		dto.setMemberId(member.getId());
