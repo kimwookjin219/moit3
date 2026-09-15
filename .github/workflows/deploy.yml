@@ -91,6 +91,7 @@ jobs:       # 실행할 job 정의
           echo "VWORLD_API_KEY=${{ secrets.VWORLD_API_KEY }}" >> back/.env
           echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> back/.env
           echo "TOSS_SECRET_KEY=${{ secrets.TOSS_SECRET_KEY }}" >> back/.env
+          echo "NEXT_PUBLIC_NAVER_MAP_CLIENT_ID=${{ secrets.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID }}" >> back/.env
 
           # Mail
           echo "MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}" >> back/.env
