@@ -59,7 +59,7 @@ upload:
   path: /upload/**    
 
 resource:
-  path: C:/upload              # 두번째 파일 방식
+  path: /home/ubuntu/app/back/build/libs/uploads             # 두번째 파일 방식
 
 jwt:
   issuer: thejoa703
