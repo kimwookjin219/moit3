@@ -60,8 +60,8 @@ public class AdvertisementScheduler {
     
     
     // 매일 오전 9시 광고기간 만료 30/14일자 발송
-//    @Scheduled(cron = "0 0 9 * * *")
-    @Scheduled(cron = "0 */5 * * * *")
+    @Scheduled(cron = "0 0 9 * * *")
+    //@Scheduled(cron = "0 */5 * * * *")
 
     public void advertisementReminder() {
     	log.info("광고 연장 안내 메일 스케줄러 실행");
