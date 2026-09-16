@@ -298,7 +298,7 @@ export function* deleteMeetup(action) {
         yield call(deleteMeetupAPI, meetupId);
 
         // 삭제 성공
-        yield put(deleteMeetupSuccess());
+        yield put(deleteMeetupSuccess(meetupId));
 
         // 목록 다시 조회
         yield put(
