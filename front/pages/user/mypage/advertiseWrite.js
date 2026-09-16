@@ -221,7 +221,8 @@ function AdvertiseWritePage() {
   // ==========================================
   // 광고 기간 계산
   // 백엔드 AdvertisementCalculationServiceImpl과 동일
-  // 시작일 / 종료일 모두 포함
+  // 실제 시작 / 종료 시간 기준
+  // 24시간 단위로 올림
   // ==========================================
   const calculateDays = (period) => {
 
@@ -236,14 +237,17 @@ function AdvertiseWritePage() {
       return 0;
     }
 
-    const startDate = start.startOf('day');
-    const endDate = end.startOf('day');
-
-    if (endDate.isBefore(startDate)) {
+    if (end.isBefore(start)) {
       return 0;
     }
 
-    return endDate.diff(startDate, 'day') + 1;
+    const seconds = end.diff(start, 'second');
+
+    // 24시간 단위로 올림, 최소 1일
+    return Math.max(
+      1,
+      Math.ceil(seconds / (24 * 60 * 60))
+    );
   };
 
   // ==========================================

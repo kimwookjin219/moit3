@@ -142,18 +142,7 @@ const meetupReducer = createSlice({
 
         deleteMeetupSuccess: (state, action) => {
             state.loading = false;
-            // 전체 모임에서 삭제
             state.meetups = state.meetups.filter(
-                (meetup) => meetup.id !== action.payload,
-            );
-
-            // 인기 모임에서도 삭제
-            state.popularMeetups = state.popularMeetups.filter(
-                (meetup) => meetup.id !== action.payload,
-            );
-
-            // 추천 모임에서도 삭제
-            state.recommendedMeetups = state.recommendedMeetups.filter(
                 (meetup) => meetup.id !== action.payload,
             );
             state.deleteSuccess = true;
