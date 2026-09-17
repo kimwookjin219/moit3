@@ -86,6 +86,20 @@ jobs:       # 실행할 job 정의
           echo "ADMIN_NICKNAME=${{ secrets.ADMIN_NICKNAME }}" >> back/.env
           echo "ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}" >> back/.env
 
+          # Demo Member
+          echo "DEMO_MEMBER_ID=${{ secrets.DEMO_MEMBER_ID }}" >> back/.env
+          echo "DEMO_MEMBER_PASSWORD=${{ secrets.DEMO_MEMBER_PASSWORD }}" >> back/.env
+          echo "DEMO_MEMBER_NICKNAME=${{ secrets.DEMO_MEMBER_NICKNAME }}" >> back/.env
+          echo "DEMO_MEMBER_EMAIL=${{ secrets.DEMO_MEMBER_EMAIL }}" >> back/.env
+          echo "DEMO_MEMBER_MOBILE=${{ secrets.DEMO_MEMBER_MOBILE }}" >> back/.env
+
+          # Demo Partner
+          echo "DEMO_PARTNER_ID=${{ secrets.DEMO_PARTNER_ID }}" >> back/.env
+          echo "DEMO_PARTNER_PASSWORD=${{ secrets.DEMO_PARTNER_PASSWORD }}" >> back/.env
+          echo "DEMO_PARTNER_NICKNAME=${{ secrets.DEMO_PARTNER_NICKNAME }}" >> back/.env
+          echo "DEMO_PARTNER_EMAIL=${{ secrets.DEMO_PARTNER_EMAIL }}" >> back/.env
+          echo "DEMO_PARTNER_MOBILE=${{ secrets.DEMO_PARTNER_MOBILE }}" >> back/.env
+
           # API
           echo "KMA_API_KEY=${{ secrets.KMA_API_KEY }}" >> back/.env
           echo "VWORLD_API_KEY=${{ secrets.VWORLD_API_KEY }}" >> back/.env

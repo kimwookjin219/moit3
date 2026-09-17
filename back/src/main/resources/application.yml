@@ -83,6 +83,20 @@ admin:
     nickname: ${ADMIN_NICKNAME}
     email: ${ADMIN_EMAIL}
     mobile: ${ADMIN_MOBILE}
+demo:
+  member:
+    id: ${DEMO_MEMBER_ID}
+    password: ${DEMO_MEMBER_PASSWORD}
+    nickname: ${DEMO_MEMBER_NICKNAME}
+    email: ${DEMO_MEMBER_EMAIL}
+    mobile: ${DEMO_MEMBER_MOBILE}
+
+  partner:
+    id: ${DEMO_PARTNER_ID}
+    password: ${DEMO_PARTNER_PASSWORD}
+    nickname: ${DEMO_PARTNER_NICKNAME}
+    email: ${DEMO_PARTNER_EMAIL}
+    mobile: ${DEMO_PARTNER_MOBILE}      
 springdoc:
   api-docs:
     enabled: true
