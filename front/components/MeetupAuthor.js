@@ -22,6 +22,22 @@ function MeetupAuthor({ meetup, meetupId }) {
         router.push(`/user/qna/questionWrite?type=MEETUP&meetupId=${meetupId}`);
     };
 
+    const getProfileImageUrl = (profileUrl) => {
+        if (!profileUrl) {
+            return "/images/moit.png";
+        }
+
+        if (profileUrl === "/images/moit.png") {
+            return "/images/moit.png";
+        }
+
+        if (profileUrl.startsWith("http")) {
+            return profileUrl;
+        }
+
+        return profileUrl.startsWith("/") ? profileUrl : `/${profileUrl}`;
+    };
+
     // const handleProfileClick = () => {
     //     router.push(`/user/profile/${meetup.memberId}`);
     // };
@@ -38,12 +54,12 @@ function MeetupAuthor({ meetup, meetupId }) {
             {/* 기본 프로필 */}
             <Space align="center">
                 <Avatar size={56} 
-                src={
-                    meetup?.profileImage
-                        ? `/upload/profile/${meetup.profileImage}`
-                        : undefined
-                }
-                icon={<UserOutlined />} />
+                src={getProfileImageUrl(meetup?.profileUrl)}
+                icon={
+                    !meetup?.profileUrl && (
+                    <UserOutlined />
+                    )
+                } />
 
                 <div>
                     <Text strong style={{ fontSize: 16 }}>
