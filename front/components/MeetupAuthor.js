@@ -37,7 +37,13 @@ function MeetupAuthor({ meetup, meetupId }) {
         <Card title="작성자" className="meetup-side-card">
             {/* 기본 프로필 */}
             <Space align="center">
-                <Avatar size={56} icon={<UserOutlined />} />
+                <Avatar size={56} 
+                src={
+                    meetup?.profileImage
+                        ? `/upload/profile/${meetup.profileImage}`
+                        : undefined
+                }
+                icon={<UserOutlined />} />
 
                 <div>
                     <Text strong style={{ fontSize: 16 }}>
