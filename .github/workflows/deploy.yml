@@ -93,6 +93,13 @@ jobs:       # 실행할 job 정의
           echo "DEMO_MEMBER_EMAIL=${{ secrets.DEMO_MEMBER_EMAIL }}" >> back/.env
           echo "DEMO_MEMBER_MOBILE=${{ secrets.DEMO_MEMBER_MOBILE }}" >> back/.env
 
+          # Demo Member 2
+          echo "DEMO_MEMBER2_ID=${{ secrets.DEMO_MEMBER2_ID }}" >> back/.env
+          echo "DEMO_MEMBER2_PASSWORD=${{ secrets.DEMO_MEMBER2_PASSWORD }}" >> back/.env
+          echo "DEMO_MEMBER2_NICKNAME=${{ secrets.DEMO_MEMBER2_NICKNAME }}" >> back/.env
+          echo "DEMO_MEMBER2_EMAIL=${{ secrets.DEMO_MEMBER2_EMAIL }}" >> back/.env
+          echo "DEMO_MEMBER2_MOBILE=${{ secrets.DEMO_MEMBER2_MOBILE }}" >> back/.env
+
           # Demo Partner
           echo "DEMO_PARTNER_ID=${{ secrets.DEMO_PARTNER_ID }}" >> back/.env
           echo "DEMO_PARTNER_PASSWORD=${{ secrets.DEMO_PARTNER_PASSWORD }}" >> back/.env

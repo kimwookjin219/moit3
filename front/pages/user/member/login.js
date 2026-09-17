@@ -427,6 +427,96 @@ function Login(){
                         </Checkbox>
                     </div>
 
+                    {/* 데모 계정 안내 */}
+                    <div
+                        style={{
+                            marginBottom: "20px",
+                            padding: "15px 18px",
+                            background: "#f8f9ff",
+                            border: "1px solid #e4e7ff",
+                            borderRadius: "10px",
+                        }}
+                    >
+                        <div
+                            style={{
+                                fontWeight: 600,
+                                fontSize: "14px",
+                                color: "#6678f5",
+                                marginBottom: "10px",
+                            }}
+                        >
+                            🔑 데모 계정 안내
+                        </div>
+
+                        {loginTab === "member" ? (
+                            <div
+                                style={{
+                                    fontSize: "13px",
+                                    color: "#666",
+                                    lineHeight: "1.8",
+                                }}
+                            >
+                                {/* 일반회원 1 */}
+                                <div>
+                                    👤 일반회원
+                                </div>
+                                <div>
+                                    ID : <code>user01</code>
+                                    {"  "}
+                                    PW : <code>user123</code>
+                                </div>
+
+                                {/* 일반회원 2 */}
+                                <div style={{ marginTop: "8px" }}>
+                                    👤 일반회원 2
+                                </div>
+                                <div>
+                                    ID : <code>user02</code>
+                                    {"  "}
+                                    PW : <code>user123</code>
+                                </div>
+
+                                {/* 제휴업체 */}
+                                <div style={{ marginTop: "8px" }}>
+                                    🏢 제휴업체
+                                </div>
+                                <div>
+                                    ID : <code>partner01</code>
+                                    {"  "}
+                                    PW : <code>partner123</code>
+                                </div>
+                            </div>
+                        ) : (
+                            <div
+                                style={{
+                                    fontSize: "13px",
+                                    color: "#666",
+                                    lineHeight: "1.8",
+                                }}
+                            >
+                                {/* 관리자 */}
+                                <div>
+                                    🛡️ 관리자
+                                </div>
+                                <div>
+                                    ID : <code>admin</code>
+                                    {"  "}
+                                    PW : <code>admin123</code>
+                                </div>
+                            </div>
+                        )}
+
+                        <div
+                            style={{
+                                marginTop: "10px",
+                                fontSize: "11px",
+                                color: "#999",
+                            }}
+                        >
+                            ※ 위 계정은 포트폴리오 데모용 계정입니다.
+                        </div>
+                    </div>
+
                     {/* 로그인 버튼 */}
                     <Form.Item
                         style={{
