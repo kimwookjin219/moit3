@@ -1066,192 +1066,192 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     }
     
 	 // =========================================================
-	 // 결제 생성
-	 // =========================================================
-	 @Override
-	 @Transactional
-	 public AdvertisementPaymentDto createInitialPayment(
-	         Long adId,
-	         Long memberId) {
-	
-	     Advertisement advertisement =
-	             advertisementRepository
-	                     .findByAdIdAndDeleteYn(adId, 'N')
-	                     .orElseThrow(() ->
-	                             new IllegalArgumentException(
-	                                     "광고를 찾을 수 없습니다."
-	                             )
-	                     );
-	
-	     // 광고주 본인 확인
-	     if (!advertisement.getAdvertiser().getId().equals(memberId)) {
-	         throw new IllegalArgumentException(
-	                 "본인의 광고만 결제할 수 있습니다."
-	         );
-	     }
-	
-	     // 승인된 광고만 결제 가능
-	     if (advertisement.getApprovalStatus() != ApprovalStatus.APPROVED) {
-	         throw new IllegalArgumentException(
-	                 "승인된 광고만 결제할 수 있습니다."
-	         );
-	     }
-	
-	     // 이미 결제된 광고인지 확인
-	     if (advertisement.getPaymentStatus() == PaymentStatus.PAID) {
-	         throw new IllegalArgumentException(
-	                 "이미 결제가 완료된 광고입니다."
-	         );
-	     }
-	
-	  // =========================================================
-	     // 기존 결제 요청이 있으면 재사용
-	     // =========================================================
-	     AdvertisementPayment payment =
-	             advertisementPaymentRepository
-	                     .findByAdvertisement_AdIdAndPaymentStatus(
-	                             adId,
-	                             PaymentHistoryStatus.REQUESTED
-	                     )
-	                     .orElse(null);
-	
-	     // =========================================================
-	     // 새 결제 생성
-	     // =========================================================
-	     if (payment == null) {
+        // 결제 생성
+        // =========================================================
+        @Override
+        @Transactional
+        public AdvertisementPaymentDto createInitialPayment(
+                Long adId,
+                Long memberId) {
+        
+                Advertisement advertisement =
+                        advertisementRepository
+                                .findByAdIdAndDeleteYn(adId, 'N')
+                                .orElseThrow(() ->
+                                        new IllegalArgumentException(
+                                                "광고를 찾을 수 없습니다."
+                                        )
+                                );
+        
+                // 광고주 본인 확인
+                if (!advertisement.getAdvertiser().getId().equals(memberId)) {
+                throw new IllegalArgumentException(
+                        "본인의 광고만 결제할 수 있습니다."
+                );
+                }
+        
+                // 승인된 광고만 결제 가능
+                if (advertisement.getApprovalStatus() != ApprovalStatus.APPROVED) {
+                throw new IllegalArgumentException(
+                        "승인된 광고만 결제할 수 있습니다."
+                );
+                }
+        
+                // 이미 결제된 광고인지 확인
+                if (advertisement.getPaymentStatus() == PaymentStatus.PAID) {
+                throw new IllegalArgumentException(
+                        "이미 결제가 완료된 광고입니다."
+                );
+                }
+        
+        // =========================================================
+                // 기존 결제 요청이 있으면 재사용
+                // =========================================================
+                AdvertisementPayment payment =
+                        advertisementPaymentRepository
+                                .findByAdvertisement_AdIdAndPaymentStatus(
+                                        adId,
+                                        PaymentHistoryStatus.REQUESTED
+                                )
+                                .orElse(null);
+        
+                // =========================================================
+                // 새 결제 생성
+                // =========================================================
+                if (payment == null) {
 
-	         // -----------------------------------------
-	         // 결제 타입
-	         // -----------------------------------------
-	         PaymentType paymentType =
-	                 advertisement.getPendingPaymentType();
+                // -----------------------------------------
+                // 결제 타입
+                // -----------------------------------------
+                PaymentType paymentType =
+                        advertisement.getPendingPaymentType();
 
-	         if (paymentType == null) {
-	             paymentType = PaymentType.INITIAL;
-	         }
+                if (paymentType == null) {
+                        paymentType = PaymentType.INITIAL;
+                }
 
-	         // -----------------------------------------
-	         // 광고에 저장되어 있는 가격 사용
-	         // ★ 여기서 가격표 재계산하지 않음
-	         // -----------------------------------------
-	         BigDecimal baseAmount =
-	                 advertisement.getBasePrice();
+                // -----------------------------------------
+                // 광고에 저장되어 있는 가격 사용
+                // ★ 여기서 가격표 재계산하지 않음
+                // -----------------------------------------
+                BigDecimal baseAmount =
+                        advertisement.getBasePrice();
 
-	         BigDecimal positionAmount =
-	                 advertisement.getPositionPrice();
+                BigDecimal positionAmount =
+                        advertisement.getPositionPrice();
 
-	         BigDecimal amount =
-	                 advertisement.getTotalBudget();
+                BigDecimal amount =
+                        advertisement.getTotalBudget();
 
-	         // 가격 데이터 검증
-	         if (baseAmount == null
-	                 || positionAmount == null
-	                 || amount == null) {
+                // 가격 데이터 검증
+                if (baseAmount == null
+                        || positionAmount == null
+                        || amount == null) {
 
-	             throw new IllegalStateException(
-	                     "광고 가격 정보가 없습니다."
-	             );
-	         }
+                        throw new IllegalStateException(
+                                "광고 가격 정보가 없습니다."
+                        );
+                }
 
-	         // -----------------------------------------
-	         // 광고 기간 계산
-	         // -----------------------------------------
-	         if (advertisement.getStartDatetime() == null
-	                 || advertisement.getEndDatetime() == null) {
+                // -----------------------------------------
+                // 광고 기간 계산
+                // -----------------------------------------
+                if (advertisement.getStartDatetime() == null
+                        || advertisement.getEndDatetime() == null) {
 
-	             throw new IllegalStateException(
-	                     "광고 기간 정보가 없습니다."
-	             );
-	         }
+                        throw new IllegalStateException(
+                                "광고 기간 정보가 없습니다."
+                        );
+                }
 
-	         int periodDays =
-	                 (int) ChronoUnit.DAYS.between(
-	                         advertisement.getStartDatetime().toLocalDate(),
-	                         advertisement.getEndDatetime().toLocalDate()
-	                 ) + 1;
+                int periodDays =
+                        (int) ChronoUnit.DAYS.between(
+                                advertisement.getStartDatetime().toLocalDate(),
+                                advertisement.getEndDatetime().toLocalDate()
+                        ) + 1;
 
-	         // -----------------------------------------
-	         // 주문번호
-	         // -----------------------------------------
-	         String orderId =
-	                 "AD_"
-	                 + adId
-	                 + "_"
-	                 + UUID.randomUUID()
-	                         .toString()
-	                         .replace("-", "")
-	                         .substring(0, 12);
+                // -----------------------------------------
+                // 주문번호
+                // -----------------------------------------
+                String orderId =
+                        "AD_"
+                        + adId
+                        + "_"
+                        + UUID.randomUUID()
+                                .toString()
+                                .replace("-", "")
+                                .substring(0, 12);
 
-	         // -----------------------------------------
-	         // 광고 위치
-	         // -----------------------------------------
-	         AdPosition position = AdPosition.MAIN;
+                // -----------------------------------------
+                // 광고 위치
+                // -----------------------------------------
+                AdPosition position = AdPosition.MAIN;
 
-	         if (positionAmount.compareTo(BigDecimal.ZERO) > 0) {
+                if (positionAmount.compareTo(BigDecimal.ZERO) > 0) {
 
-	             List<AdvertisementImageDto> imageList =
-	                     selectAdvertisementImageList(adId);
+                        List<AdvertisementImageDto> imageList =
+                                selectAdvertisementImageList(adId);
 
-	             if (imageList != null && !imageList.isEmpty()) {
+                        if (imageList != null && !imageList.isEmpty()) {
 
-	                 position =
-	                         imageList.stream()
-	                                 .map(AdvertisementImageDto::getImageType)
-	                                 .filter(Objects::nonNull)
-	                                 .map(type -> {
-	                                     try {
-	                                         return AdPosition.valueOf(
-	                                                 type.toUpperCase()
-	                                         );
-	                                     } catch (IllegalArgumentException e) {
-	                                         return null;
-	                                     }
-	                                 })
-	                                 .filter(Objects::nonNull)
-	                                 .findFirst()
-	                                 .orElse(AdPosition.MAIN);
-	             }
-	         }
+                        position =
+                                imageList.stream()
+                                        .map(AdvertisementImageDto::getImageType)
+                                        .filter(Objects::nonNull)
+                                        .map(type -> {
+                                                try {
+                                                return AdPosition.valueOf(
+                                                        type.toUpperCase()
+                                                );
+                                                } catch (IllegalArgumentException e) {
+                                                return null;
+                                                }
+                                        })
+                                        .filter(Objects::nonNull)
+                                        .findFirst()
+                                        .orElse(AdPosition.MAIN);
+                        }
+                }
 
-	         // -----------------------------------------
-	         // 결제 이력 생성
-	         // ★ 현재 광고 가격을 스냅샷
-	         // -----------------------------------------
-	         payment =
-	                 AdvertisementPayment.builder()
-	                         .advertisement(advertisement)
-	                         .advertiser(advertisement.getAdvertiser())
+                // -----------------------------------------
+                // 결제 이력 생성
+                // ★ 현재 광고 가격을 스냅샷
+                // -----------------------------------------
+                payment =
+                        AdvertisementPayment.builder()
+                                .advertisement(advertisement)
+                                .advertiser(advertisement.getAdvertiser())
 
-	                         .paymentType(paymentType)
-	                         .orderId(orderId)
+                                .paymentType(paymentType)
+                                .orderId(orderId)
 
-	                         .baseAmount(baseAmount)
-	                         .positionAmount(positionAmount)
-	                         .amount(amount)
+                                .baseAmount(baseAmount)
+                                .positionAmount(positionAmount)
+                                .amount(amount)
 
-	                         .position(position)
+                                .position(position)
 
-	                         .paymentStatus(
-	                                 PaymentHistoryStatus.REQUESTED
-	                         )
+                                .paymentStatus(
+                                        PaymentHistoryStatus.REQUESTED
+                                )
 
-	                         .periodDays(periodDays)
+                                .periodDays(periodDays)
 
-	                         .startDatetime(
-	                                 advertisement.getStartDatetime()
-	                         )
+                                .startDatetime(
+                                        advertisement.getStartDatetime()
+                                )
 
-	                         .endDatetime(
-	                                 advertisement.getEndDatetime()
-	                         )
+                                .endDatetime(
+                                        advertisement.getEndDatetime()
+                                )
 
-	                         .build();
+                                .build();
 
-	         advertisementPaymentRepository.save(payment);
-	     }
+                advertisementPaymentRepository.save(payment);
+                }
 
-	     return toPaymentDto(payment);
-	 }
+                return toPaymentDto(payment);
+        }
     
     
     @Override
