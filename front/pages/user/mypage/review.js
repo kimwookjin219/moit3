@@ -106,18 +106,7 @@ function UserMyReviewPage() {
     if (memberId) {
       fetchNotifications();
     }
-
-    const handleRouteChange = () => {
-      if (memberId) {
-        fetchNotifications();
-      }
-    };
-
-    router.events?.on('routeChangeComplete', handleRouteChange);
-    return () => {
-      router.events?.off('routeChangeComplete', handleRouteChange);
-    };
-  }, [memberId, router]);
+  }, [memberId]);
 
   const handleSearch = () => {
     setSearchKeyword(keyword);
@@ -304,8 +293,16 @@ function UserMyReviewPage() {
                 ]}
               >
                 <List.Item.Meta
-                  title={<Text strong>{item.title || `모임 #${item.meetupId} 참여가 완료되었습니다.`}</Text>}
-                  description={<Text type="secondary">{item.message || '즐거운 모임 되셨나요? 다른 회원님들을 위해 후기를 남겨주세요!'}</Text>}
+                  title={
+                    <Text strong>
+                      모임 참여가 완료되었습니다.
+                    </Text>
+                  }
+                  description={
+                    <Text type="secondary">
+                      {item.content}
+                    </Text>
+                  }
                 />
               </List.Item>
             )}
