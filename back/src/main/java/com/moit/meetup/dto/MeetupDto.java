@@ -57,6 +57,7 @@ public class MeetupDto {
 		private ApplyStatus applyStatus;
 		
 		private String nickname;
+		private String profileUrl;
 		
 		private Long sigunguId;
 		private String sigunguName;
@@ -141,6 +142,7 @@ public class MeetupDto {
 		    
 		    response.setMemberId(meetup.getMember().getId());
 		    response.setNickname(meetup.getMember().getNickname());
+			response.setProfileUrl(meetup.getMember().getProfileUrl());
 		    response.setSigunguId(meetup.getSigungu().getId());
 		    response.setSigunguName(meetup.getSigungu().getName());
 		    response.setCategoryId(meetup.getMeetupCategory().getId());
