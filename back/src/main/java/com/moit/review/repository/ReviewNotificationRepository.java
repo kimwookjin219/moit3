@@ -28,10 +28,6 @@ public interface ReviewNotificationRepository extends JpaRepository<ReviewNotifi
 			WHERE m.meetupAt < :targetTimeStr
 			  AND m.deleteYn = 'N'
 			  AND m.meetupStatus = com.moit.meetup.enums.MeetupStatus.COMPLETED
-			  AND NOT EXISTS (
-			      SELECT n FROM ReviewNotification n 
-			      WHERE n.meetup.id = m.id AND n.member.id = m.member.id
-			  )
 		""")
-	List<Meetup> findFinishedMeetupsWithoutNotification(@Param("targetTimeStr") LocalDateTime targetTimeStr);
+	List<Meetup> findFinishedMeetups(@Param("targetTimeStr") LocalDateTime targetTimeStr);
 }
