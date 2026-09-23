@@ -13,6 +13,9 @@ function AdBanner({ position }) {
 
     const [ad, setAd] = useState(null);
 
+    const API_BASE_URL =
+        process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080";
+
     // 한 번의 화면 렌더링에서 노출 API 중복 호출 방지
     const impressionSent = useRef(false);
 
@@ -153,68 +156,62 @@ function AdBanner({ position }) {
 
 
     return (
-        <Row>
-            <Col span={24}>
+            <Card
+                hoverable
+                className={`main-ad-card ad-${position}`}
+                onClick={handleClick}
+                styles={{
+                    body: {
+                        padding: 0
+                    }
+                }}
+            >
 
-                <Card
-                    hoverable
-                    className={`main-ad-card ad-${position}`}
-                    onClick={handleClick}
-                    styles={{
-                        body: {
-                            padding: 0
-                        }
-                    }}
-                >
+                {/* 광고 이미지 */}
 
-                    {/* 광고 이미지 */}
+                {adImage?.imageUrl ? (
 
-                    {adImage?.imageUrl ? (
+                    <img
+                        src={`${API_BASE_URL}${adImage.imageUrl}`}
+                        alt={ad.title || "광고"}
+                        className={`ad-image ad-${position}`}
+                    />
 
-                        <img
-                            src={adImage.imageUrl}
-                            alt={ad.title || "광고"}
-                            className={`ad-image ad-${position}`}
-                        />
+                ) : (
 
-                    ) : (
+                    <div className="ad-placeholder">
 
-                        <div className="ad-placeholder">
+                        <Text type="secondary">
+                            현재 진행 중인 광고가 없습니다.
+                        </Text>
 
-                            <Text type="secondary">
-                                현재 진행 중인 광고가 없습니다.
-                            </Text>
+                    </div>
 
+                )}
+
+
+                {/* PREMIUM 광고 */}
+
+                {ad.adGrade === "PREMIUM" && (
+
+                    <div
+                        className="premium-ad-overlay"
+                        onClick={handleClick}
+                    >
+
+                        <div className="premium-ad-title">
+                            {ad.title}
                         </div>
 
-                    )}
-
-
-                    {/* PREMIUM 광고 */}
-
-                    {ad.adGrade === "PREMIUM" && (
-
-                        <div
-                            className="premium-ad-overlay"
-                            onClick={handleClick}
-                        >
-
-                            <div className="premium-ad-title">
-                                {ad.title}
-                            </div>
-
-                            <div className="premium-ad-content">
-                                {ad.content}
-                            </div>
-
+                        <div className="premium-ad-content">
+                            {ad.content}
                         </div>
 
-                    )}
+                    </div>
 
-                </Card>
+                )}
 
-            </Col>
-        </Row>
+            </Card>
     );
 }
 
